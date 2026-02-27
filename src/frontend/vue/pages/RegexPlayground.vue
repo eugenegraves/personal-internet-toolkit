@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import PerfPanel from '../components/PerfPanel.vue';
 
 const pattern = ref('(\\w+)@(\\w+)\\.(\\w+)');
 const flags = ref('gi');
@@ -234,6 +235,7 @@ function toggleFlag(f: string) {
 				</div>
 			</div>
 		</main>
+		<PerfPanel />
 	</div>
 </template>
 

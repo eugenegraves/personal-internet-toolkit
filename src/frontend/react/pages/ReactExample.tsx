@@ -1,6 +1,7 @@
 import { App } from '../components/App';
 import { Dropdown } from '../components/Dropdown';
 import { Head } from '../components/Head';
+import { PerfPanel } from '../components/PerfPanel';
 
 type ReactExampleProps = {
 	initialCount: number;
@@ -8,7 +9,7 @@ type ReactExampleProps = {
 };
 
 export const ReactExample = ({ initialCount, cssPath }: ReactExampleProps) => (
-	<html>
+	<html lang="en">
 		<Head cssPath={cssPath} />
 		<body>
 			<header>
@@ -16,6 +17,7 @@ export const ReactExample = ({ initialCount, cssPath }: ReactExampleProps) => (
 				<Dropdown />
 			</header>
 			<App initialCount={initialCount} />
+			<PerfPanel />
 		</body>
 	</html>
 );

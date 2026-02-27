@@ -3,11 +3,11 @@
 		"@absolutejs/absolute": "0.17.3",
 		"@elysiajs/static": "1.4.7",
 		"elysia": "1.4.25",
+		"elysia-scoped-state": "0.1.1",
 		"react": "19.2.4",
 		"react-dom": "19.2.4",
 		"svelte": "5.53.0",
-		"vue": "3.5.28",
-		"elysia-scoped-state": "0.1.1"
+		"vue": "3.5.28"
 	},
 	"devDependencies": {
 		"typescript": "5.9.3",

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PerfPanel from '../components/PerfPanel.svelte';
 	type MarkdownEditorProps = {
 		cssPath: string;
 	};
@@ -254,6 +255,8 @@ function greet(name) {
 		</div>
 	</div>
 </div>
+
+<PerfPanel />
 
 <style>
 	/* Scoped component styles — extend design system */

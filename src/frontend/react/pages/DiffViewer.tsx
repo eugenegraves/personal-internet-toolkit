@@ -255,16 +255,21 @@ console.log("Factorial(5):", fact5);
 console.log("Performance improved with memoization");`;
 
 // ─── Main Component ───
+import { PerfPanel } from '../components/PerfPanel';
 
 export const DiffViewer = ({ cssPath }: DiffViewerProps) => {
+    console.log('[DiffViewer] Render started');
     const [leftText, setLeftText] = useState(SAMPLE_LEFT);
     const [rightText, setRightText] = useState(SAMPLE_RIGHT);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const diffLines = useMemo(
-        () => computeDiff(leftText, rightText),
-        [leftText, rightText]
-    );
+    const diffLines = useMemo(() => {
+        console.log('[DiffViewer] Computing diff...');
+        const t0 = performance.now();
+        const res = computeDiff(leftText, rightText);
+        console.log(`[DiffViewer] Diff computed in ${performance.now() - t0}ms`);
+        return res;
+    }, [leftText, rightText]);
 
     const stats = useMemo(() => {
         let added = 0,
@@ -278,11 +283,13 @@ export const DiffViewer = ({ cssPath }: DiffViewerProps) => {
         return { added, removed, unchanged, total: diffLines.length };
     }, [diffLines]);
 
+    console.log('[DiffViewer] Calling useVirtualList...');
     const { visibleItems, totalHeight } = useVirtualList(
         containerRef,
         diffLines.length,
         22
     );
+    console.log('[DiffViewer] Render complete. Visible items:', visibleItems.length);
 
     return (
         <html lang="en">
@@ -556,6 +563,7 @@ export const DiffViewer = ({ cssPath }: DiffViewerProps) => {
                         </div>
                     </div>
                 </div>
+                <PerfPanel />
             </body>
         </html>
     );

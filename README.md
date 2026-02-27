@@ -99,13 +99,13 @@ Each tool maintains strict state isolation:
 
 ## Performance Instrumentation
 
-A floating panel on every page (implemented in vanilla JS) displays:
+A floating panel on every page provides real-time metrics. Initially built as a global Vanilla JS singleton, it has been **refactored into idiomatic, framework-specific components** (React, Vue, Svelte). This guarantees absolute architectural isolation: React uses `useEffect`/`useState`, Svelte uses `$state` runes, and Vue uses `ref`/`onMounted`, entirely avoiding cross-framework contamination and generic DOM-query bugs.
 
 | Metric | Source |
 |--------|--------|
-| Active Framework | `<meta name="x-framework">` tag |
+| Active Framework | Hardcoded per component / `<meta name="x-framework">` |
 | DOM Node Count | `document.querySelectorAll('*').length` (polled) |
-| Mutation Count | `MutationObserver` on `<main>` |
+| Mutation Count | `MutationObserver` on `document.body` (ignoring self) |
 | JS Heap Memory | `performance.memory.usedJSHeapSize` |
 | Frame Cost | `requestAnimationFrame` delta averaging |
 | Page Load | `PerformanceNavigationTiming.loadEventEnd` |
