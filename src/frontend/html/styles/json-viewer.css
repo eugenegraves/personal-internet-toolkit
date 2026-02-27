@@ -1,0 +1,134 @@
+/* JSON Viewer Styles */
+
+.json-tool {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.json-tool__input-area {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.json-tool__input-area .textarea {
+    max-height: 200px;
+    font-size: var(--fs-sm);
+}
+
+.json-tool__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.json-tool__actions .mono {
+    margin-left: auto;
+    font-size: var(--fs-xs);
+}
+
+/* Tree */
+
+.json-tree {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    padding: var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    min-height: 200px;
+    overflow: auto;
+    max-height: calc(100vh - 360px);
+}
+
+.json-node--branch {
+    margin-left: var(--space-4);
+}
+
+.json-node--leaf {
+    margin-left: var(--space-4);
+    padding: 1px 0;
+}
+
+.json-branch-summary {
+    cursor: pointer;
+    padding: 1px 0;
+    list-style: none;
+    display: flex;
+    gap: var(--space-1);
+    align-items: baseline;
+}
+
+.json-branch-summary::-webkit-details-marker {
+    display: none;
+}
+
+.json-branch-summary::before {
+    content: '▸';
+    color: var(--text-muted);
+    transition: transform var(--transition-fast);
+    display: inline-block;
+    width: 1em;
+    flex-shrink: 0;
+}
+
+details[open]>.json-branch-summary::before {
+    content: '▾';
+}
+
+.json-key {
+    color: var(--accent);
+}
+
+.json-colon {
+    color: var(--text-muted);
+}
+
+.json-value--string {
+    color: hsl(100, 50%, 60%);
+}
+
+.json-value--number {
+    color: hsl(30, 80%, 65%);
+}
+
+.json-value--boolean {
+    color: hsl(280, 60%, 65%);
+}
+
+.json-value--null {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.json-count {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+}
+
+.json-bracket {
+    color: var(--text-muted);
+}
+
+.json-bracket--close {
+    margin-left: var(--space-4);
+}
+
+.json-children {
+    border-left: 1px solid var(--border-subtle);
+    margin-left: 0.5em;
+    padding-left: var(--space-1);
+}
+
+.json-error {
+    padding: var(--space-3) var(--space-4);
+    background: var(--error-muted);
+    border: 1px solid var(--error);
+    border-radius: var(--radius-sm);
+    color: var(--error);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+}

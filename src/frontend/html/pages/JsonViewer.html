@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-framework" content="Vanilla" />
+    <title>JSON Tree Explorer | Personal Internet Toolkit</title>
+    <link rel="stylesheet" href="../styles/design-system.css" />
+    <link rel="stylesheet" href="../styles/instrumentation.css" />
+    <link rel="stylesheet" href="./styles/json-viewer.css" />
+</head>
+
+<body>
+    <div class="page-shell">
+        <nav class="nav">
+            <div class="nav__brand">⚡ <span>Personal Internet Toolkit</span></div>
+            <ul class="nav__links">
+                <li><a class="nav__link" href="/">Home</a></li>
+                <li><a class="nav__link" href="/markdown">Markdown</a></li>
+                <li><a class="nav__link nav__link--active" href="/json">JSON</a></li>
+                <li><a class="nav__link" href="/diff">Diff</a></li>
+                <li><a class="nav__link" href="/regex">Regex</a></li>
+                <li><a class="nav__link" href="/convert">Convert</a></li>
+                <li><a class="nav__link" href="/compress">Compress</a></li>
+            </ul>
+        </nav>
+
+        <div class="tool-header">
+            <h1 class="tool-header__title">JSON Tree Explorer</h1>
+            <div class="tool-header__meta">
+                <span class="badge badge--vanilla">Vanilla JS</span>
+                <span>No framework runtime • Lazy node expansion • 100k+ node capacity</span>
+            </div>
+        </div>
+
+        <main class="tool-body json-tool">
+            <div class="json-tool__input-area">
+                <textarea id="json-input" class="textarea"
+                    placeholder="Paste JSON here, or click 'Load Sample' to try a large example..."
+                    spellcheck="false"></textarea>
+                <div class="json-tool__actions">
+                    <button id="btn-parse" class="btn btn--primary">Parse & Render Tree</button>
+                    <button id="btn-sample" class="btn btn--ghost">Load Sample (1000 nodes)</button>
+                    <button id="btn-clear" class="btn btn--ghost">Clear</button>
+                    <span id="json-stats" class="text-muted mono"></span>
+                </div>
+            </div>
+
+            <div id="json-tree" class="json-tree" role="tree"></div>
+            <div id="json-error" class="json-error hidden"></div>
+        </main>
+    </div>
+
+    <script src="./scripts/json-tree.ts"></script>
+    <script src="./scripts/perf-panel.ts"></script>
+</body>
+
+</html>

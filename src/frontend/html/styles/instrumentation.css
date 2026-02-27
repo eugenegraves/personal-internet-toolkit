@@ -1,0 +1,108 @@
+/* ============================================================
+   Performance Instrumentation Panel
+   ============================================================ */
+
+.perf-panel {
+    position: fixed;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    z-index: 9999;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    min-width: 260px;
+}
+
+.perf-panel__toggle {
+    position: absolute;
+    top: -32px;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all var(--transition-fast);
+    line-height: 1;
+}
+
+.perf-panel__toggle:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+}
+
+.perf-panel__body {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-lg);
+}
+
+.perf-panel__title {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.perf-panel__title::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.perf-panel__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.perf-panel__row:last-child {
+    border-bottom: none;
+}
+
+.perf-panel__label {
+    color: var(--text-muted);
+}
+
+.perf-panel__value {
+    color: var(--text);
+    font-weight: var(--fw-medium);
+}
+
+.perf-panel__framework {
+    font-weight: var(--fw-bold);
+}
+
+.perf-panel--collapsed .perf-panel__body {
+    display: none;
+}

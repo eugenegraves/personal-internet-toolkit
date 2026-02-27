@@ -1,3 +1,3 @@
-import VueExample from '../../frontend/vue/pages/VueExample.vue';
+import RegexPlayground from '../../frontend/vue/pages/RegexPlayground.vue';
 
-export const vueImports = { VueExample } as const;
+export const vueImports = { RegexPlayground } as const;

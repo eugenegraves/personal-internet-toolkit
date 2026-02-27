@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-framework" content="Vanilla" />
+    <title>Image Compressor | Personal Internet Toolkit</title>
+    <link rel="stylesheet" href="../styles/design-system.css" />
+    <link rel="stylesheet" href="../styles/instrumentation.css" />
+    <link rel="stylesheet" href="./styles/compressor.css" />
+</head>
+
+<body>
+    <div class="page-shell">
+        <nav class="nav">
+            <div class="nav__brand">⚡ <span>Personal Internet Toolkit</span></div>
+            <ul class="nav__links">
+                <li><a class="nav__link" href="/">Home</a></li>
+                <li><a class="nav__link" href="/markdown">Markdown</a></li>
+                <li><a class="nav__link" href="/json">JSON</a></li>
+                <li><a class="nav__link" href="/diff">Diff</a></li>
+                <li><a class="nav__link" href="/regex">Regex</a></li>
+                <li><a class="nav__link" href="/convert">Convert</a></li>
+                <li><a class="nav__link nav__link--active" href="/compress">Compress</a></li>
+            </ul>
+        </nav>
+
+        <div class="tool-header">
+            <h1 class="tool-header__title">Image Compressor</h1>
+            <div class="tool-header__meta">
+                <span class="badge badge--vanilla">Web Worker</span>
+                <span>Canvas-based compression • Worker thread offloading • Non-blocking UI</span>
+            </div>
+        </div>
+
+        <main class="tool-body compressor">
+            <div class="compressor__upload-area" id="drop-zone">
+                <input type="file" id="file-input" accept="image/*" class="hidden" />
+                <div class="compressor__upload-prompt">
+                    <span class="compressor__upload-icon">📁</span>
+                    <p>Drop an image here or <button id="btn-browse" class="btn btn--primary">Browse</button></p>
+                    <p class="text-muted" style="font-size: var(--fs-xs);">Supports JPEG, PNG, WebP</p>
+                </div>
+            </div>
+
+            <div id="compressor-controls" class="compressor__controls hidden">
+                <div class="compressor__slider-row">
+                    <label for="quality-slider">Quality</label>
+                    <input type="range" id="quality-slider" min="1" max="100" value="75" class="compressor__slider" />
+                    <span id="quality-value" class="mono">75%</span>
+                </div>
+                <div class="compressor__format-row">
+                    <label for="format-select">Format</label>
+                    <select id="format-select" class="select" style="width: auto;">
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WebP</option>
+                        <option value="image/png">PNG</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="compressor-progress" class="compressor__progress hidden">
+                <div class="compressor__progress-bar">
+                    <div id="progress-fill" class="compressor__progress-fill"></div>
+                </div>
+                <span id="progress-text" class="text-muted mono">Compressing...</span>
+            </div>
+
+            <div id="compressor-result" class="compressor__result hidden">
+                <div class="compressor__comparison">
+                    <div class="compressor__preview">
+                        <h3>Original</h3>
+                        <canvas id="canvas-original" class="compressor__canvas"></canvas>
+                        <span id="size-original" class="mono text-muted"></span>
+                    </div>
+                    <div class="compressor__preview">
+                        <h3>Compressed</h3>
+                        <canvas id="canvas-compressed" class="compressor__canvas"></canvas>
+                        <span id="size-compressed" class="mono text-muted"></span>
+                    </div>
+                </div>
+                <div class="compressor__stats">
+                    <div class="compressor__stat">
+                        <span class="compressor__stat-label">Reduction</span>
+                        <span id="stat-reduction" class="compressor__stat-value text-success">—</span>
+                    </div>
+                    <div class="compressor__stat">
+                        <span class="compressor__stat-label">Dimensions</span>
+                        <span id="stat-dimensions" class="compressor__stat-value">—</span>
+                    </div>
+                    <button id="btn-download" class="btn btn--primary">Download Compressed</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./scripts/compressor-app.ts"></script>
+    <script src="./scripts/perf-panel.ts"></script>
+</body>
+
+</html>

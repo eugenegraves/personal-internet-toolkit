@@ -5,7 +5,7 @@
     "": {
       "name": "personal-internet-toolkit",
       "dependencies": {
-        "@absolutejs/absolute": "0.16.10",
+        "@absolutejs/absolute": "0.17.3",
         "@elysiajs/static": "1.4.7",
         "elysia": "1.4.25",
         "elysia-scoped-state": "0.1.1",
@@ -39,7 +39,9 @@
     },
   },
   "packages": {
-    "@absolutejs/absolute": ["@absolutejs/absolute@0.16.10", "", { "dependencies": { "react-refresh": "^0.18.0" }, "peerDependencies": { "elysia": "^1.4.0", "react": "^19.2.0", "react-dom": "^19.2.0", "svelte": "^5.35.2", "vue": "^3.5.27" }, "optionalPeers": ["react", "react-dom", "svelte", "vue"], "bin": { "absolutejs": "dist/cli/index.js" } }, "sha512-6oCruOgGBVKWpbYmaCPAWUvJ6A13y7JUvqJqok7Ams1hRrqgEsrh4nP47aKZWWpqpK4QfJ/e0BUB64Y4CS77rg=="],
+    "@absolutejs/absolute": ["@absolutejs/absolute@0.17.3", "", { "dependencies": { "@angular/compiler": "^21.0.0", "react-refresh": "^0.18.0" }, "peerDependencies": { "@angular/common": "^21.0.0", "@angular/compiler-cli": "^21.0.0", "@angular/core": "^21.0.0", "@angular/platform-browser": "^21.0.0", "@angular/platform-server": "^21.0.0", "@angular/ssr": "^21.0.0", "elysia": "^1.4.0", "react": "^19.2.0", "react-dom": "^19.2.0", "svelte": "^5.35.2", "vue": "^3.5.27", "zone.js": "^0.15.0" }, "optionalPeers": ["@angular/common", "@angular/compiler-cli", "@angular/core", "@angular/platform-browser", "@angular/platform-server", "@angular/ssr", "react", "react-dom", "svelte", "vue", "zone.js"], "bin": { "absolute": "dist/cli/index.js" } }, "sha512-6mo8AltCwUdwrL1JqIR2E5e0gr/qCe7eEqzUryD5VaZgVHAdyBz4LKbcpwGZuqTPXon2/W1F8rWr9CTuaCzQnQ=="],
+
+    "@angular/compiler": ["@angular/compiler@21.2.0", "", { "dependencies": { "tslib": "^2.3.0" } }, "sha512-0RPkma8UVNpse/VJcXT9w6SKzTMz4J/uMGj0l9enM1frg9xrx1fwi/lLmaVV9Nr9LfqPjQdxNFFlvaBB7g/2zg=="],
 
     "@babel/code-frame": ["@babel/code-frame@7.29.0", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.28.5", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw=="],
 
@@ -652,6 +654,8 @@
     "ts-api-utils": ["ts-api-utils@2.4.0", "", { "peerDependencies": { "typescript": ">=4.8.4" } }, "sha512-3TaVTaAv2gTiMB35i3FiGJaRfwb3Pyn/j3m/bfAvGe8FB7CF6u+LMYqYlDh7reQf7UNvoTvdfAqHGmPGOSsPmA=="],
 
     "tsconfig-paths": ["tsconfig-paths@3.15.0", "", { "dependencies": { "@types/json5": "^0.0.29", "json5": "^1.0.2", "minimist": "^1.2.6", "strip-bom": "^3.0.0" } }, "sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg=="],
+
+    "tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
     "type-check": ["type-check@0.4.0", "", { "dependencies": { "prelude-ls": "^1.2.1" } }, "sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew=="],
 

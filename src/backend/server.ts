@@ -1,6 +1,7 @@
-import { ReactExample } from '../frontend/react/pages/ReactExample';
-import SvelteExample from '../frontend/svelte/pages/SvelteExample.svelte';
+import { DiffViewer } from '../frontend/react/pages/DiffViewer';
+import MarkdownEditor from '../frontend/svelte/pages/MarkdownEditor.svelte';
 import { vueImports } from './utils/vueImporter';
+import { convert, UNIT_OPTIONS } from './utils/converter';
 import {
 	BuildConfig,
 	asset,
@@ -18,7 +19,8 @@ import { handleVuePageRequest } from '@absolutejs/absolute/vue';
 import { staticPlugin } from '@elysiajs/static';
 import { env } from 'bun';
 import { Elysia } from 'elysia';
-import { scopedState } from 'elysia-scoped-state';
+
+// ─── Build Configuration ───
 
 const buildConfig: BuildConfig = {
 	assetsDirectory: 'src/backend/assets',
@@ -34,53 +36,88 @@ const buildConfig: BuildConfig = {
 const isDev = env.NODE_ENV === 'development';
 const result = isDev ? await devBuild(buildConfig) : await build(buildConfig);
 
+// ─── Server ───
+
 const server = new Elysia()
 	.use(staticPlugin({ assets: './build', prefix: '' }))
-	.use(scopedState({ count: { value: 0 } }))
+
+	// ──────────────── LANDING PAGE (HTML) ────────────────
 	.get('/', () =>
-		handleReactPageRequest(
-			ReactExample,
-			asset(result, 'ReactExampleIndex'),
-			{ initialCount: 0, cssPath: asset(result, 'ReactExampleCSS') }
-		)
+		handleHTMLPageRequest('build/html/pages/Landing.html')
 	)
-	.get('/react', () =>
-		handleReactPageRequest(
-			ReactExample,
-			asset(result, 'ReactExampleIndex'),
-			{ initialCount: 0, cssPath: asset(result, 'ReactExampleCSS') }
-		)
-	)
-	.get('/html', () =>
-		handleHTMLPageRequest(`build/html/pages/HTMLExample.html`)
-	)
-	.get('/htmx', () =>
-		handleHTMXPageRequest(`build/htmx/pages/HTMXExample.html`)
-	)
-	.post('/htmx/reset', ({ resetScopedStore }) => resetScopedStore())
-	.get('/htmx/count', ({ scopedStore }) => scopedStore.count)
-	.post('/htmx/increment', ({ scopedStore }) => ++scopedStore.count)
-	.get('/svelte', () =>
+
+	// ──────────────── MARKDOWN EDITOR (Svelte) ────────────────
+	.get('/markdown', () =>
 		handleSveltePageRequest(
-			SvelteExample,
-			asset(result, 'SvelteExample'),
-			asset(result, 'SvelteExampleIndex'),
-			{ initialCount: 0, cssPath: asset(result, 'SvelteExampleCSS') }
+			MarkdownEditor,
+			asset(result, 'MarkdownEditor'),
+			asset(result, 'MarkdownEditorIndex'),
+			{ cssPath: asset(result, 'MarkdownEditorCSS') }
 		)
 	)
-	.get('/vue', () =>
+
+	// ──────────────── JSON VIEWER (Vanilla HTML) ────────────────
+	.get('/json', () =>
+		handleHTMLPageRequest('build/html/pages/JsonViewer.html')
+	)
+
+	// ──────────────── DIFF VIEWER (React) ────────────────
+	.get('/diff', () =>
+		handleReactPageRequest(
+			DiffViewer,
+			asset(result, 'DiffViewerIndex'),
+			{ cssPath: asset(result, 'DiffViewerCSS') }
+		)
+	)
+
+	// ──────────────── REGEX PLAYGROUND (Vue) ────────────────
+	.get('/regex', () =>
 		handleVuePageRequest(
-			vueImports.VueExample,
-			asset(result, 'VueExample'),
-			asset(result, 'VueExampleIndex'),
+			vueImports.RegexPlayground,
+			asset(result, 'RegexPlayground'),
+			asset(result, 'RegexPlaygroundIndex'),
 			generateHeadElement({
-				cssPath: asset(result, 'VueExampleCSS'),
-				title: 'AbsoluteJS + Vue',
-				description: 'A Vue.js example with AbsoluteJS'
+				cssPath: '/css/regex-playground.css',
+				title: 'Regex Playground | Personal Internet Toolkit',
+				description: 'Live regex evaluation with match highlighting'
 			}),
-			{ initialCount: 0 }
+			{}
 		)
 	)
+
+	// ──────────────── UNIT CONVERTER (HTMX) ────────────────
+	.get('/convert', () =>
+		handleHTMXPageRequest('build/htmx/pages/UnitConverter.html')
+	)
+
+	// HTMX API: Convert
+	.post('/api/convert', ({ body }) => {
+		const { value, fromUnit, toUnit, category } = body as {
+			value: string;
+			fromUnit: string;
+			toUnit: string;
+			category: string;
+		};
+		const numValue = parseFloat(value);
+		const converted = convert(numValue, fromUnit, toUnit, category);
+		return `<span class="converter__result-value">${converted}</span>`;
+	})
+
+	// HTMX API: Get units for a category
+	.get('/api/units', ({ query }) => {
+		const category = (query as { category?: string }).category || 'length';
+		const units = UNIT_OPTIONS[category] ?? UNIT_OPTIONS['length'];
+		return (units ?? [])
+			.map((u) => `<option value="${u.value}">${u.label}</option>`)
+			.join('');
+	})
+
+	// ──────────────── IMAGE COMPRESSOR (Vanilla HTML + Worker) ────────────────
+	.get('/compress', () =>
+		handleHTMLPageRequest('build/html/pages/ImageCompressor.html')
+	)
+
+	// ──────────────── Networking & Error Handling ────────────────
 	.use(networking)
 	.on('error', (err) => {
 		const { request } = err;
@@ -88,6 +125,8 @@ const server = new Elysia()
 			`Server error on ${request.method} ${request.url}: ${err.message}`
 		);
 	});
+
+// ─── HMR Setup ───
 
 if (
 	typeof result.hmrState !== 'string' &&

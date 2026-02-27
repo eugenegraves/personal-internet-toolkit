@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="x-framework" content="HTML" />
+  <meta name="description" content="Personal Internet Toolkit — A contextual frontend architecture showcase using AbsoluteJS" />
+  <title>Personal Internet Toolkit</title>
+  <link rel="stylesheet" href="../styles/design-system.css" />
+  <link rel="stylesheet" href="../styles/instrumentation.css" />
+  <link rel="stylesheet" href="./styles/landing.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <nav class="nav">
+      <div class="nav__brand">⚡ <span>Personal Internet Toolkit</span></div>
+      <ul class="nav__links">
+        <li><a class="nav__link nav__link--active" href="/">Home</a></li>
+        <li><a class="nav__link" href="/markdown">Markdown</a></li>
+        <li><a class="nav__link" href="/json">JSON</a></li>
+        <li><a class="nav__link" href="/diff">Diff</a></li>
+        <li><a class="nav__link" href="/regex">Regex</a></li>
+        <li><a class="nav__link" href="/convert">Convert</a></li>
+        <li><a class="nav__link" href="/compress">Compress</a></li>
+      </ul>
+    </nav>
+
+    <main class="landing">
+      <section class="landing__hero">
+        <h1 class="landing__title">Your Developer Toolkit,<br/><span class="text-accent">Architecturally Considered</span></h1>
+        <p class="landing__subtitle">
+          Six tools. Five frameworks. One server.<br/>
+          Each tool uses the framework best suited to its interaction pattern.
+        </p>
+      </section>
+
+      <section class="landing__grid">
+        <a href="/markdown" class="card tool-card">
+          <div class="tool-card__header">
+            <span class="badge badge--svelte">Svelte</span>
+          </div>
+          <h2 class="card__title">Markdown Editor</h2>
+          <p class="card__description">
+            Live split-view editor with debounced preview, word count, reading time, and outline generation.
+            Svelte's compile-time reactivity handles high-frequency keystrokes with minimal runtime.
+          </p>
+          <div class="tool-card__reason">High-frequency reactive input</div>
+        </a>
+
+        <a href="/json" class="card tool-card">
+          <div class="tool-card__header">
+            <span class="badge badge--vanilla">Vanilla</span>
+          </div>
+          <h2 class="card__title">JSON Tree Explorer</h2>
+          <p class="card__description">
+            Recursive tree with lazy-loaded child nodes. Handles 100k+ node files.
+            No framework runtime — just DOM manipulation on expand/collapse.
+          </p>
+          <div class="tool-card__reason">No persistent reactivity needed</div>
+        </a>
+
+        <a href="/diff" class="card tool-card">
+          <div class="tool-card__header">
+            <span class="badge badge--react">React</span>
+          </div>
+          <h2 class="card__title">Diff Viewer</h2>
+          <p class="card__description">
+            Side-by-side diff with virtualized line rendering and memoized rows.
+            React's controlled rendering and windowing patterns excel for large lists.
+          </p>
+          <div class="tool-card__reason">Controlled virtualization</div>
+        </a>
+
+        <a href="/regex" class="card tool-card">
+          <div class="tool-card__header">
+            <span class="badge badge--vue">Vue</span>
+          </div>
+          <h2 class="card__title">Regex Playground</h2>
+          <p class="card__description">
+            Live regex evaluation with match highlighting, error handling, and computed match counters.
+            Vue's computed properties provide clean, structured mid-level reactivity.
+          </p>
+          <div class="tool-card__reason">Structured computed reactivity</div>
+        </a>
+
+        <a href="/convert" class="card tool-card">
+          <div class="tool-card__header">
+            <span class="badge badge--htmx">HTMX</span>
+          </div>
+          <h2 class="card__title">Unit Converter</h2>
+          <p class="card__description">
+            Instant conversion via HTML-over-the-wire. Declarative hypermedia interactions
+            with zero client-side state management. HTMX's sweet spot.
+          </p>
+          <div class="tool-card__reason">HTML-over-the-wire pattern</div>
+        </a>
+
+        <a href="/compress" class="card tool-card">
+          <div class="tool-card__header">
+            <span class="badge badge--vanilla">Web Worker</span>
+          </div>
+          <h2 class="card__title">Image Compressor</h2>
+          <p class="card__description">
+            Upload, preview, and compress images with a quality slider. Heavy compression
+            runs in a Web Worker thread for a non-blocking UI.
+          </p>
+          <div class="tool-card__reason">Worker-thread offloading</div>
+        </a>
+      </section>
+
+      <section class="landing__thesis">
+        <h2>The Architectural Thesis</h2>
+        <p>
+          Not every UI surface deserves the same framework. A keystroke-heavy editor benefits from
+          compile-time reactivity (Svelte). A virtualized list needs controlled rendering (React).
+          A form submission is perfectly served by hypermedia (HTMX). A tree explorer needs no
+          framework at all.
+        </p>
+        <p>
+          <strong>AbsoluteJS</strong> acts as the orchestration layer — routing, SSR, and build
+          tooling — while each tool loads only the framework it needs. No monolithic bundle.
+          No wasted runtime.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="./scripts/perf-panel.ts"></script>
+</body>
+</html>
