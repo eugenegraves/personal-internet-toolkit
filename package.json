@@ -33,6 +33,7 @@
 	},
 	"name": "personal-internet-toolkit",
 	"scripts": {
+		"build": "absolutejs build",
 		"dev": "absolutejs dev",
 		"format": "absolutejs prettier --write \"./**/*.{js,ts,css,json,mjs,md,jsx,tsx,svelte,vue,html}\"",
 		"lint": "absolutejs eslint",
