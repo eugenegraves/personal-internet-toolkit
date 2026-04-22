@@ -7,6 +7,9 @@ export const PerfPanel = () => {
     const [heap, setHeap] = useState<string>('—');
     const [frame, setFrame] = useState<string>('—');
     const [load, setLoad] = useState<string>('—');
+    const [ttfb, setTtfb] = useState<string>('—');
+    const [lcp, setLcp] = useState<string>('—');
+    const [inp, setInp] = useState<string>('—');
     const frameSamplesRef = useRef<number[]>([]);
 
     useEffect(() => {
@@ -82,7 +85,12 @@ export const PerfPanel = () => {
         const checkLoad = () => {
             const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
             if (nav) {
-                setLoad((nav.loadEventEnd - nav.startTime).toFixed(0) + ' ms');
+                if (nav.loadEventEnd > 0) {
+                    setLoad((nav.loadEventEnd - nav.startTime).toFixed(0) + ' ms');
+                }
+                if (nav.responseStart > 0) {
+                    setTtfb(nav.responseStart.toFixed(0) + ' ms');
+                }
             }
         };
         if (document.readyState === 'complete') {
@@ -91,12 +99,48 @@ export const PerfPanel = () => {
             window.addEventListener('load', checkLoad);
         }
 
+        // LCP
+        let lcpObserver: PerformanceObserver | undefined;
+        try {
+            lcpObserver = new PerformanceObserver((entryList) => {
+                const entries = entryList.getEntries();
+                const lastEntry = entries[entries.length - 1];
+                if (lastEntry) {
+                    setLcp(`${lastEntry.startTime.toFixed(0)} ms`);
+                }
+            });
+            lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        } catch (e) {
+            setLcp('N/A');
+        }
+
+        // INP
+        let maxInp = 0;
+        let inpObserver: PerformanceObserver | undefined;
+        try {
+            inpObserver = new PerformanceObserver((entryList) => {
+                for (const entry of entryList.getEntries()) {
+                    if (!(entry as any).interactionId) continue;
+                    if (entry.duration > maxInp) {
+                        maxInp = entry.duration;
+                        setInp(`${maxInp.toFixed(0)} ms`);
+                    }
+                }
+            });
+            inpObserver.observe({ type: 'event', durationThreshold: 16, buffered: true } as any);
+        } catch (e) {
+            setInp('N/A');
+        }
+
         return () => {
             clearInterval(domInt);
             clearInterval(heapInt);
             clearInterval(frameInt);
             observer.disconnect();
             cancelAnimationFrame(rafId);
+            if (lcpObserver) lcpObserver.disconnect();
+            if (inpObserver) inpObserver.disconnect();
+            window.removeEventListener('load', checkLoad);
         };
     }, []);
 
@@ -149,6 +193,18 @@ export const PerfPanel = () => {
                     <div className="perf-panel__row">
                         <span className="perf-panel__label">Load</span>
                         <span className="perf-panel__value">{load}</span>
+                    </div>
+                    <div className="perf-panel__row">
+                        <span className="perf-panel__label">TTFB</span>
+                        <span className="perf-panel__value">{ttfb}</span>
+                    </div>
+                    <div className="perf-panel__row">
+                        <span className="perf-panel__label">LCP</span>
+                        <span className="perf-panel__value">{lcp}</span>
+                    </div>
+                    <div className="perf-panel__row">
+                        <span className="perf-panel__label">INP</span>
+                        <span className="perf-panel__value">{inp}</span>
                     </div>
                 </div>
             </div>

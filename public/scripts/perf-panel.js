@@ -132,6 +132,18 @@ function initPerfPanel() {
         <span class="perf-panel__label">Load</span>
         <span class="perf-panel__value" id="perf-load">—</span>
       </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">TTFB</span>
+        <span class="perf-panel__value" id="perf-ttfb">—</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">LCP</span>
+        <span class="perf-panel__value" id="perf-lcp">—</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">INP</span>
+        <span class="perf-panel__value" id="perf-inp">—</span>
+      </div>
     </div>
   `;
   document.body.appendChild(panel);
@@ -141,6 +153,9 @@ function initPerfPanel() {
   const elHeap = document.getElementById("perf-heap");
   const elFrame = document.getElementById("perf-frame");
   const elLoad = document.getElementById("perf-load");
+  const elTtfb = document.getElementById("perf-ttfb");
+  const elLcp = document.getElementById("perf-lcp");
+  const elInp = document.getElementById("perf-inp");
   const toggle = panel.querySelector(".perf-panel__toggle");
   let collapsed = false;
   toggle.addEventListener("click", () => {
@@ -203,21 +218,57 @@ function initPerfPanel() {
     rafId = requestAnimationFrame(frameLoop);
   }
   rafId = requestAnimationFrame(frameLoop);
-  function updateLoad() {
+  function updateLoadAndTtfb() {
     const nav = performance.getEntriesByType("navigation")[0];
-    if (nav && nav.loadEventEnd > 0) {
-      const loadTime = (nav.loadEventEnd - nav.startTime).toFixed(0);
-      elLoad.textContent = `${loadTime} ms`;
+    if (nav) {
+      if (nav.loadEventEnd > 0) {
+        const loadTime = (nav.loadEventEnd - nav.startTime).toFixed(0);
+        elLoad.textContent = `${loadTime} ms`;
+      }
+      if (nav.responseStart > 0) {
+        elTtfb.textContent = `${nav.responseStart.toFixed(0)} ms`;
+      }
     }
   }
-  updateLoad();
-  window.addEventListener("load", updateLoad);
+  updateLoadAndTtfb();
+  window.addEventListener("load", updateLoadAndTtfb);
+
+  let lcpObserver, inpObserver;
+  try {
+    lcpObserver = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      const lastEntry = entries[entries.length - 1];
+      elLcp.textContent = `${lastEntry.startTime.toFixed(0)} ms`;
+    });
+    lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+  } catch (e) {
+    elLcp.textContent = "N/A";
+  }
+
+  let maxInp = 0;
+  try {
+    inpObserver = new PerformanceObserver((entryList) => {
+      for (const entry of entryList.getEntries()) {
+        if (!entry.interactionId) continue;
+        if (entry.duration > maxInp) {
+          maxInp = entry.duration;
+          elInp.textContent = `${maxInp.toFixed(0)} ms`;
+        }
+      }
+    });
+    inpObserver.observe({ type: 'event', durationThreshold: 16, buffered: true });
+  } catch (e) {
+    elInp.textContent = "N/A";
+  }
+
   return () => {
     clearInterval(domInterval);
     clearInterval(heapInterval);
     cancelAnimationFrame(rafId);
     observer.disconnect();
-    window.removeEventListener("load", updateLoad);
+    if (lcpObserver) lcpObserver.disconnect();
+    if (inpObserver) inpObserver.disconnect();
+    window.removeEventListener("load", updateLoadAndTtfb);
     style.remove();
     panel.remove();
   };

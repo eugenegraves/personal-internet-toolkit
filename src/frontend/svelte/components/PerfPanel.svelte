@@ -8,6 +8,9 @@
     let heap = $state('—');
     let frame = $state('—');
     let load = $state('—');
+    let ttfb = $state('—');
+    let lcp = $state('—');
+    let inp = $state('—');
     const fwColor = 'var(--svelte)';
 
     let mutCount = 0;
@@ -15,6 +18,8 @@
     let domInt: ReturnType<typeof setInterval>;
     let heapInt: ReturnType<typeof setInterval>;
     let rafId: number;
+    let lcpObserver: PerformanceObserver | undefined;
+    let inpObserver: PerformanceObserver | undefined;
 
     onMount(() => {
         const updateDom = () => {
@@ -63,13 +68,47 @@
         const checkLoad = () => {
             const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
             if (nav) {
-                load = (nav.loadEventEnd - nav.startTime).toFixed(0) + ' ms';
+                if (nav.loadEventEnd > 0) {
+                    load = (nav.loadEventEnd - nav.startTime).toFixed(0) + ' ms';
+                }
+                if (nav.responseStart > 0) {
+                    ttfb = nav.responseStart.toFixed(0) + ' ms';
+                }
             }
         };
         if (document.readyState === 'complete') {
             checkLoad();
         } else {
             window.addEventListener('load', checkLoad);
+        }
+
+        try {
+            lcpObserver = new PerformanceObserver((entryList) => {
+                const entries = entryList.getEntries();
+                const lastEntry = entries[entries.length - 1];
+                if (lastEntry) {
+                    lcp = `${lastEntry.startTime.toFixed(0)} ms`;
+                }
+            });
+            lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        } catch (e) {
+            lcp = 'N/A';
+        }
+
+        let maxInp = 0;
+        try {
+            inpObserver = new PerformanceObserver((entryList) => {
+                for (const entry of entryList.getEntries()) {
+                    if (!(entry as any).interactionId) continue;
+                    if (entry.duration > maxInp) {
+                        maxInp = entry.duration;
+                        inp = `${maxInp.toFixed(0)} ms`;
+                    }
+                }
+            });
+            inpObserver.observe({ type: 'event', durationThreshold: 16, buffered: true } as any);
+        } catch (e) {
+            inp = 'N/A';
         }
     });
 
@@ -79,6 +118,8 @@
         clearInterval(heapInt);
         if (observer) observer.disconnect();
         cancelAnimationFrame(rafId);
+        if (lcpObserver) lcpObserver.disconnect();
+        if (inpObserver) inpObserver.disconnect();
     });
 </script>
 
@@ -111,6 +152,18 @@
         <div class="perf-panel__row">
             <span class="perf-panel__label">Load</span>
             <span class="perf-panel__value">{load}</span>
+        </div>
+        <div class="perf-panel__row">
+            <span class="perf-panel__label">TTFB</span>
+            <span class="perf-panel__value">{ttfb}</span>
+        </div>
+        <div class="perf-panel__row">
+            <span class="perf-panel__label">LCP</span>
+            <span class="perf-panel__value">{lcp}</span>
+        </div>
+        <div class="perf-panel__row">
+            <span class="perf-panel__label">INP</span>
+            <span class="perf-panel__value">{inp}</span>
         </div>
     </div>
 </div>

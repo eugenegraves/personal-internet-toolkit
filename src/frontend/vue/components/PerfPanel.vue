@@ -7,12 +7,17 @@ const mutations = ref(0);
 const heap = ref('—');
 const frame = ref('—');
 const load = ref('—');
+const ttfb = ref('—');
+const lcp = ref('—');
+const inp = ref('—');
 const fwColor = 'var(--vue)';
 
 let domInt: ReturnType<typeof setInterval>;
 let heapInt: ReturnType<typeof setInterval>;
 let rafId: number;
 let observer: MutationObserver;
+let lcpObserver: PerformanceObserver | undefined;
+let inpObserver: PerformanceObserver | undefined;
 let mutCount = 0;
 
 const PERF_CSS = `
@@ -85,13 +90,47 @@ onMounted(() => {
     const checkLoad = () => {
         const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         if (nav) {
-            load.value = (nav.loadEventEnd - nav.startTime).toFixed(0) + ' ms';
+            if (nav.loadEventEnd > 0) {
+                load.value = (nav.loadEventEnd - nav.startTime).toFixed(0) + ' ms';
+            }
+            if (nav.responseStart > 0) {
+                ttfb.value = nav.responseStart.toFixed(0) + ' ms';
+            }
         }
     };
     if (document.readyState === 'complete') {
         checkLoad();
     } else {
         window.addEventListener('load', checkLoad);
+    }
+
+    try {
+        lcpObserver = new PerformanceObserver((entryList) => {
+            const entries = entryList.getEntries();
+            const lastEntry = entries[entries.length - 1];
+            if (lastEntry) {
+                lcp.value = `${lastEntry.startTime.toFixed(0)} ms`;
+            }
+        });
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch (e) {
+        lcp.value = 'N/A';
+    }
+
+    let maxInp = 0;
+    try {
+        inpObserver = new PerformanceObserver((entryList) => {
+            for (const entry of entryList.getEntries()) {
+                if (!(entry as any).interactionId) continue;
+                if (entry.duration > maxInp) {
+                    maxInp = entry.duration;
+                    inp.value = `${maxInp.toFixed(0)} ms`;
+                }
+            }
+        });
+        inpObserver.observe({ type: 'event', durationThreshold: 16, buffered: true } as any);
+    } catch (e) {
+        inp.value = 'N/A';
     }
 });
 
@@ -100,6 +139,8 @@ onUnmounted(() => {
     clearInterval(heapInt);
     if (observer) observer.disconnect();
     cancelAnimationFrame(rafId);
+    if (lcpObserver) lcpObserver.disconnect();
+    if (inpObserver) inpObserver.disconnect();
 });
 </script>
 
@@ -133,6 +174,18 @@ onUnmounted(() => {
       <div class="perf-panel__row">
         <span class="perf-panel__label">Load</span>
         <span class="perf-panel__value">{{ load }}</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">TTFB</span>
+        <span class="perf-panel__value">{{ ttfb }}</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">LCP</span>
+        <span class="perf-panel__value">{{ lcp }}</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">INP</span>
+        <span class="perf-panel__value">{{ inp }}</span>
       </div>
     </div>
   </div>

@@ -36,6 +36,18 @@
         <span class="perf-panel__label">Load</span>
         <span class="perf-panel__value" id="perf-load">—</span>
       </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">TTFB</span>
+        <span class="perf-panel__value" id="perf-ttfb">—</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">LCP</span>
+        <span class="perf-panel__value" id="perf-lcp">—</span>
+      </div>
+      <div class="perf-panel__row">
+        <span class="perf-panel__label">INP</span>
+        <span class="perf-panel__value" id="perf-inp">—</span>
+      </div>
     </div>
   `;
   document.body.appendChild(panel);
@@ -47,6 +59,9 @@
   const elHeap      = document.getElementById('perf-heap')!;
   const elFrame     = document.getElementById('perf-frame')!;
   const elLoad      = document.getElementById('perf-load')!;
+  const elTtfb      = document.getElementById('perf-ttfb')!;
+  const elLcp       = document.getElementById('perf-lcp')!;
+  const elInp       = document.getElementById('perf-inp')!;
   const toggle      = panel.querySelector('.perf-panel__toggle') as HTMLButtonElement;
 
   // --------------- Toggle ---------------
@@ -123,12 +138,48 @@
   }
   requestAnimationFrame(frameLoop);
 
-  // --------------- Page Load Time ---------------
+  // --------------- Page Load Time & TTFB ---------------
   window.addEventListener('load', () => {
     const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
     if (nav) {
-      const loadTime = (nav.loadEventEnd - nav.startTime).toFixed(0);
-      elLoad.textContent = `${loadTime} ms`;
+      if (nav.loadEventEnd > 0) {
+        const loadTime = (nav.loadEventEnd - nav.startTime).toFixed(0);
+        elLoad.textContent = `${loadTime} ms`;
+      }
+      if (nav.responseStart > 0) {
+        elTtfb.textContent = `${nav.responseStart.toFixed(0)} ms`;
+      }
     }
   });
+
+  // --------------- LCP (Largest Contentful Paint) ---------------
+  try {
+    const lcpObserver = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      const lastEntry = entries[entries.length - 1];
+      if (lastEntry) {
+        elLcp.textContent = `${lastEntry.startTime.toFixed(0)} ms`;
+      }
+    });
+    lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+  } catch (e) {
+    elLcp.textContent = 'N/A';
+  }
+
+  // --------------- INP (Interaction to Next Paint) ---------------
+  let maxInp = 0;
+  try {
+    const inpObserver = new PerformanceObserver((entryList) => {
+      for (const entry of entryList.getEntries()) {
+        if (!(entry as any).interactionId) continue;
+        if (entry.duration > maxInp) {
+          maxInp = entry.duration;
+          elInp.textContent = `${maxInp.toFixed(0)} ms`;
+        }
+      }
+    });
+    inpObserver.observe({ type: 'event', durationThreshold: 16, buffered: true } as any);
+  } catch (e) {
+    elInp.textContent = 'N/A';
+  }
 })();
