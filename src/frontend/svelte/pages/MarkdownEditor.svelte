@@ -1,3 +1,4 @@
+<svelte:options runes={true} />
 <script lang="ts">
 	import PerfPanel from '../components/PerfPanel.svelte';
 	type MarkdownEditorProps = {
@@ -83,7 +84,7 @@ function greet(name) {
 		for (const line of lines) {
 			const match = line.match(/^(#{1,6})\s+(.+)/);
 			if (match) {
-				headings.push({ level: match[1].length, text: match[2] });
+				headings.push({ level: match[1]!.length, text: match[2]! });
 			}
 		}
 		return headings;

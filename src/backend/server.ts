@@ -3,43 +3,22 @@ import MarkdownEditor from '../frontend/svelte/pages/MarkdownEditor.svelte';
 import { vueImports } from './utils/vueImporter';
 import { convert, UNIT_OPTIONS } from './utils/converter';
 import {
-	BuildConfig,
 	asset,
-	build,
-	devBuild,
 	generateHeadElement,
 	handleHTMLPageRequest,
 	handleHTMXPageRequest,
 	handleReactPageRequest,
-	hmr,
-	networking
+	networking,
+	prepare
 } from '@absolutejs/absolute';
 import { handleSveltePageRequest } from '@absolutejs/absolute/svelte';
 import { handleVuePageRequest } from '@absolutejs/absolute/vue';
-import { staticPlugin } from '@elysiajs/static';
-import { env } from 'bun';
 import { Elysia } from 'elysia';
 
-// ─── Build Configuration ───
-
-const buildConfig: BuildConfig = {
-	assetsDirectory: 'src/backend/assets',
-	buildDirectory: 'build',
-	reactDirectory: 'src/frontend/react',
-	htmlDirectory: 'src/frontend/html',
-	htmxDirectory: 'src/frontend/htmx',
-	svelteDirectory: 'src/frontend/svelte',
-	vueDirectory: 'src/frontend/vue',
-	publicDirectory: 'public'
-};
-
-const isDev = env.NODE_ENV === 'development';
-const result = isDev ? await devBuild(buildConfig) : await build(buildConfig);
-
-// ─── Server ───
+const { absolutejs, manifest } = await prepare();
 
 const server = new Elysia()
-	.use(staticPlugin({ assets: './build', prefix: '' }))
+	.use(absolutejs)
 
 	// ──────────────── LANDING PAGE (HTML) ────────────────
 	.get('/', () =>
@@ -48,12 +27,11 @@ const server = new Elysia()
 
 	// ──────────────── MARKDOWN EDITOR (Svelte) ────────────────
 	.get('/markdown', () =>
-		handleSveltePageRequest(
-			MarkdownEditor,
-			asset(result, 'MarkdownEditor'),
-			asset(result, 'MarkdownEditorIndex'),
-			{ cssPath: asset(result, 'MarkdownEditorCSS') }
-		)
+		handleSveltePageRequest({
+			pagePath: asset(manifest, 'MarkdownEditor'),
+			indexPath: asset(manifest, 'MarkdownEditorIndex'),
+			props: { cssPath: asset(manifest, 'MarkdownEditorCSS') }
+		})
 	)
 
 	// ──────────────── JSON VIEWER (Vanilla HTML) ────────────────
@@ -63,26 +41,25 @@ const server = new Elysia()
 
 	// ──────────────── DIFF VIEWER (React) ────────────────
 	.get('/diff', () =>
-		handleReactPageRequest(
-			DiffViewer,
-			asset(result, 'DiffViewerIndex'),
-			{ cssPath: asset(result, 'DiffViewerCSS') }
-		)
+		handleReactPageRequest({
+			Page: DiffViewer,
+			index: asset(manifest, 'DiffViewerIndex'),
+			props: { cssPath: asset(manifest, 'DiffViewerCSS') }
+		})
 	)
 
 	// ──────────────── REGEX PLAYGROUND (Vue) ────────────────
 	.get('/regex', () =>
-		handleVuePageRequest(
-			vueImports.RegexPlayground,
-			asset(result, 'RegexPlayground'),
-			asset(result, 'RegexPlaygroundIndex'),
-			generateHeadElement({
+		handleVuePageRequest({
+			pagePath: asset(manifest, 'RegexPlayground'),
+			indexPath: asset(manifest, 'RegexPlaygroundIndex'),
+			headTag: generateHeadElement({
 				cssPath: '/css/regex-playground.css',
 				title: 'Regex Playground | Personal Internet Toolkit',
 				description: 'Live regex evaluation with match highlighting'
 			}),
-			{}
-		)
+			props: {}
+		})
 	)
 
 	// ──────────────── UNIT CONVERTER (HTMX) ────────────────
@@ -126,11 +103,3 @@ const server = new Elysia()
 		);
 	});
 
-// ─── HMR Setup ───
-
-if (
-	typeof result.hmrState !== 'string' &&
-	typeof result.manifest === 'object'
-) {
-	server.use(hmr(result.hmrState, result.manifest));
-}

@@ -1,3 +1,4 @@
+<svelte:options runes={true} />
 <script lang="ts">
 	type CounterProps = {
 		initialCount: number;
