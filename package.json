@@ -33,7 +33,7 @@
 	},
 	"name": "personal-internet-toolkit",
 	"scripts": {
-		"compile": "absolute compile src/backend/server.ts",
+		"compile": "absolute compile src/backend/server.ts --outdir build",
 		"dev": "absolute dev",
 		"format": "absolute prettier --write \"./**/*.{js,ts,css,json,mjs,md,jsx,tsx,svelte,vue,html}\"",
 		"lint": "absolute eslint",
