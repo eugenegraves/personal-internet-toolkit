@@ -33,10 +33,10 @@
 	},
 	"name": "personal-internet-toolkit",
 	"scripts": {
-		"build": "absolute build",
-		"dev": "absolutejs dev",
-		"format": "absolutejs prettier --write \"./**/*.{js,ts,css,json,mjs,md,jsx,tsx,svelte,vue,html}\"",
-		"lint": "absolutejs eslint",
+		"compile": "absolute compile src/backend/server.ts",
+		"dev": "absolute dev",
+		"format": "absolute prettier --write \"./**/*.{js,ts,css,json,mjs,md,jsx,tsx,svelte,vue,html}\"",
+		"lint": "absolute eslint",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"typecheck": "bun run tsc --noEmit"
 	},
